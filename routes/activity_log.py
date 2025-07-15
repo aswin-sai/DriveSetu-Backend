@@ -6,7 +6,6 @@ activity_log_bp = Blueprint('activity_log', __name__)
 
 @activity_log_bp.route('/', methods=['GET'])
 def list_logs():
-    # Optional: add filters for user_id, target_table, etc.
     logs = ActivityLog.query.order_by(ActivityLog.timestamp.desc()).all()
     return jsonify([
         {

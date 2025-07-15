@@ -48,9 +48,10 @@ class Instructor(db.Model):
     __tablename__ = 'instructors'
     id = db.Column(db.String(50), primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(100), unique=True, nullable=False)
     phone = db.Column(db.String(20))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    email = db.Column(db.String(100), unique=True)
+    experience = db.Column(db.Integer)  # in years
+    specialty = db.Column(db.String(100))
     sessions = db.relationship('Session', back_populates='instructor', cascade='all, delete-orphan')
 
 class ActivityLog(db.Model):
@@ -60,4 +61,11 @@ class ActivityLog(db.Model):
     action_type = db.Column(db.String(20), nullable=False)
     target_table = db.Column(db.String(50), nullable=False)
     description = db.Column(db.Text)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow) 
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+    __table_args__ = (
+        db.CheckConstraint(
+            action_type.in_(['INSERT', 'UPDATE', 'DELETE', 'LOGIN', 'LOGOUT']),
+            name='check_action_type_valid'
+        ),
+    ) 

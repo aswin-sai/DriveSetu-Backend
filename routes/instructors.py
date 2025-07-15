@@ -12,9 +12,10 @@ def list_instructors():
         {
             'id': i.id,
             'name': i.name,
-            'email': i.email,
             'phone': i.phone,
-            'created_at': i.created_at.isoformat() if i.created_at else None
+            'email': i.email,
+            'experience': i.experience,
+            'specialty': i.specialty
         } for i in instructors
     ])
 
@@ -26,9 +27,10 @@ def get_instructor(instructor_id):
     return jsonify({
         'id': instructor.id,
         'name': instructor.name,
-        'email': instructor.email,
         'phone': instructor.phone,
-        'created_at': instructor.created_at.isoformat() if instructor.created_at else None
+        'email': instructor.email,
+        'experience': instructor.experience,
+        'specialty': instructor.specialty
     })
 
 @instructors_bp.route('/', methods=['POST'])
@@ -38,8 +40,10 @@ def create_instructor():
         instructor = Instructor(
             id=data['id'],
             name=data['name'],
-            email=data['email'],
-            phone=data.get('phone')
+            phone=data.get('phone'),
+            email=data.get('email'),
+            experience=data.get('experience'),
+            specialty=data.get('specialty')
         )
         db.session.add(instructor)
         db.session.commit()
@@ -58,8 +62,10 @@ def update_instructor(instructor_id):
         return jsonify({'error': 'Instructor not found'}), 404
     data = request.get_json()
     instructor.name = data.get('name', instructor.name)
-    instructor.email = data.get('email', instructor.email)
     instructor.phone = data.get('phone', instructor.phone)
+    instructor.email = data.get('email', instructor.email)
+    instructor.experience = data.get('experience', instructor.experience)
+    instructor.specialty = data.get('specialty', instructor.specialty)
     try:
         db.session.commit()
         return jsonify({'message': 'Instructor updated'})
