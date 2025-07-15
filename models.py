@@ -31,14 +31,33 @@ class Session(db.Model):
     start_time = db.Column(db.Time)
     end_time = db.Column(db.Time)
     distance = db.Column(db.Integer)
-    instructor = db.Column(db.String(100))
+    instructor_id = db.Column(db.String(50), db.ForeignKey('instructors.id', ondelete='SET NULL'))
     session_type = db.Column(db.String(50), nullable=False)
     notes = db.Column(db.Text)
     location = db.Column(db.String(100))
     student = db.relationship('Student', back_populates='sessions')
+    instructor = db.relationship('Instructor', back_populates='sessions')
 
     __table_args__ = (
         db.Index('idx_sessions_student_id', 'student_id'),
-        db.Index('idx_sessions_instructor', 'instructor'),
+        db.Index('idx_sessions_instructor_id', 'instructor_id'),
         db.Index('idx_sessions_date', 'date'),
-    ) 
+    )
+
+class Instructor(db.Model):
+    __tablename__ = 'instructors'
+    id = db.Column(db.String(50), primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(100), unique=True, nullable=False)
+    phone = db.Column(db.String(20))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    sessions = db.relationship('Session', back_populates='instructor', cascade='all, delete-orphan')
+
+class ActivityLog(db.Model):
+    __tablename__ = 'activity_log'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.String(50), db.ForeignKey('users.id', ondelete='SET NULL'))
+    action_type = db.Column(db.String(20), nullable=False)
+    target_table = db.Column(db.String(50), nullable=False)
+    description = db.Column(db.Text)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow) 

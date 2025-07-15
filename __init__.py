@@ -20,9 +20,13 @@ def create_app():
     from .routes.users import users_bp
     from .routes.students import students_bp
     from .routes.sessions import sessions_bp
+    from .routes.instructors import instructors_bp
+    from .routes.activity_log import activity_log_bp
 
     app.register_blueprint(users_bp, url_prefix='/users')
     app.register_blueprint(students_bp, url_prefix='/students')
     app.register_blueprint(sessions_bp, url_prefix='/sessions')
+    app.register_blueprint(instructors_bp, url_prefix='/instructors')
+    app.register_blueprint(activity_log_bp, url_prefix='/activity_log')
 
     return app 
